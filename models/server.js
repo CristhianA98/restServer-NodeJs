@@ -7,7 +7,14 @@ class Server{
     constructor(){
         this.app = express();
         this.port = process.env.PORT;
-        this.usuariosPath = '/api/usuarios';
+
+        this.paths ={
+            auth:'/api/auth',
+            usuarios:'/api/usuarios',
+            categorias:'/api/categorias',
+            productos:'/api/productos',
+            buscar:'/api/buscar'
+        }
         
         //Middlewares
         this.middlewares();
@@ -35,7 +42,11 @@ class Server{
     }
 
     routes(){
-        this.app.use(this.usuariosPath,require('../routes/usuario'));
+        this.app.use(this.paths.auth,require('../routes/auth'));
+        this.app.use(this.paths.usuarios,require('../routes/usuario'));
+        this.app.use(this.paths.categorias,require('../routes/categoria'));
+        this.app.use(this.paths.productos,require('../routes/producto'));
+        this.app.use(this.paths.buscar,require('../routes/buscar'));
     }
 
     listen(){

@@ -2,22 +2,22 @@ const { response } = require('express');
 const Usuario = require('../models/usuario');
 const bcrypt = require('bcryptjs');
 
-const usuarioGet = async(req, res = response) => {
+const usuarioGet = async (req, res = response) => {
 
     const { limite = 5, desde = 0 } = req.query;
-/*     
-    const usuarios = await Usuario.find({ estado:true })
-                                .skip(Number( desde ))
-                                .limit(Number( limite ));
-    
-    const total = await Usuario.countDocuments({ estado:true }); */
+    /*     
+        const usuarios = await Usuario.find({ estado:true })
+                                    .skip(Number( desde ))
+                                    .limit(Number( limite ));
+        
+        const total = await Usuario.countDocuments({ estado:true }); */
 
     const [total, usuarios] = await Promise.all([
-        Usuario.countDocuments({ estado:true }),     
+        Usuario.countDocuments({ estado: true }),
 
-        Usuario.find({ estado:true })
-                                .skip(Number( desde ))
-                                .limit(Number( limite ))
+        Usuario.find({ estado: true })
+            .skip(Number(desde))
+            .limit(Number(limite))
     ]);
 
     res.json({
@@ -44,10 +44,10 @@ const usuarioPost = async (req, res = response) => {
     });
 }
 
-const usuarioPut = async(req, res) => {
+const usuarioPut = async (req, res) => {
 
     const { id } = req.params;
-    const { _id,password, google, correo, ...resto } = req.body;
+    const { _id, password, google, correo, ...resto } = req.body;
 
     /* VALIDAR CONTRA BASE DE DATOS */
     if (password) {
@@ -56,23 +56,28 @@ const usuarioPut = async(req, res) => {
         resto.password = bcrypt.hashSync(password, salt);
     }
 
-    const usuario = await Usuario.findByIdAndUpdate(id,resto);
+    const usuario = await Usuario.findByIdAndUpdate(id, resto);
 
     res.json({
         id
     });
 }
 
-const usuarioDelete = async(req, res) => {
-    const {id} = req.params;
+const usuarioDelete = async (req, res) => {
+    const { id } = req.params;
 
     //Borrar fisicamente
     //const usuario = await Usuario.findByIdAndDelete(id);
 
-    const usuario = await Usuario.findByIdAndUpdate(id,{estado:false});
+    const usuario = await Usuario.findByIdAndUpdate(id, { estado: false });
+
+    //Regresa uid del validar jwt
+    const uid = req.uid;
+    const usuarioLogueado = req.usuario;
 
     res.json({
-        usuario
+        usuario,
+        usuarioLogueado
     });
 }
 
