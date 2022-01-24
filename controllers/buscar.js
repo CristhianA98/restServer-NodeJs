@@ -88,8 +88,6 @@ const buscar = (req, res) => {
                 msg: "Busqueda Olvidada"
             })
     }
-
-
 }
 
 module.exports = {
